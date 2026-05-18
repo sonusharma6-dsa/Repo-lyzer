@@ -230,21 +230,21 @@ var analyzeCmd = &cobra.Command{
 		}
 		overallProgress.CompleteStep("File structure scanned")
 		// Incremental analysis support
-if incremental {
+		if incremental {
 
-	currentHashes := make(map[string]string)
+			currentHashes := make(map[string]string)
 
-	for _, file := range fileTree {
-		if file.Type != "blob" {
-			continue
+			for _, file := range fileTree {
+				if file.Type != "blob" {
+					continue
+				}
+
+				currentHashes[file.Path] = file.Sha
+			}
+
+			fmt.Println("🔄 Incremental analysis enabled")
+			fmt.Printf("📂 Repository files tracked: %d\n", len(currentHashes))
 		}
-
-		currentHashes[file.Path] = file.Sha
-	}
-
-	fmt.Println("🔄 Incremental analysis enabled")
-	fmt.Printf("📂 Repository files tracked: %d\n", len(currentHashes))
-}
 
 		// Calculate repository health score
 		overallProgress.StartStep("💪 Computing repository health")
@@ -513,4 +513,3 @@ func init() {
 		"Analyze only changed files using cached metadata",
 	)
 }
-

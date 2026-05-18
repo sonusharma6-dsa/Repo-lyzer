@@ -898,29 +898,29 @@ func (m MainModel) analyzeRepo(ctx context.Context, repoName string) tea.Cmd {
 		}
 
 		// Compare with cached incremental metadata
-changedFiles := []string{}
+		changedFiles := []string{}
 
-if entry, found := m.cache.Get(repoName); found {
-	if entry.IncrementalMetadata != nil {
+		if entry, found := m.cache.Get(repoName); found {
+			if entry.IncrementalMetadata != nil {
 
-		for path, hash := range currentHashes {
-			cachedHash, exists := entry.IncrementalMetadata[path]
+				for path, hash := range currentHashes {
+					cachedHash, exists := entry.IncrementalMetadata[path]
 
-			// File is new or modified
-			if !exists || cachedHash != hash {
-				changedFiles = append(changedFiles, path)
+					// File is new or modified
+					if !exists || cachedHash != hash {
+						changedFiles = append(changedFiles, path)
+					}
+				}
+
+				fmt.Printf("🔄 Incremental analysis enabled\n")
+				fmt.Printf("📂 Changed files detected: %d\n", len(changedFiles))
+
+				// No changes detected
+				if len(changedFiles) == 0 {
+					fmt.Println("✅ No repository changes detected. Using cached analysis.")
+				}
 			}
 		}
-
-		fmt.Printf("🔄 Incremental analysis enabled\n")
-		fmt.Printf("📂 Changed files detected: %d\n", len(changedFiles))
-
-		// No changes detected
-		if len(changedFiles) == 0 {
-			fmt.Println("✅ No repository changes detected. Using cached analysis.")
-		}
-	}
-}
 
 		tracker.NextStage()
 

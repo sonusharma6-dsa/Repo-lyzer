@@ -40,14 +40,12 @@ import (
 // Each entry contains the full analysis data along with timing information
 // for TTL-based expiration.
 type CacheEntry struct {
-	RepoName             string            `json:"repo_name"`                    // Repository identifier (owner/repo)
-	CachedAt             time.Time         `json:"cached_at"`                    // When the entry was cached
-	ExpiresAt            time.Time         `json:"expires_at"`                   // When the entry expires
-	Analysis             json.RawMessage   `json:"analysis"`                     // Serialized AnalysisResult
-	IncrementalMetadata  map[string]string `json:"incremental_metadata,omitempty"`
+	RepoName            string            `json:"repo_name"`  // Repository identifier (owner/repo)
+	CachedAt            time.Time         `json:"cached_at"`  // When the entry was cached
+	ExpiresAt           time.Time         `json:"expires_at"` // When the entry expires
+	Analysis            json.RawMessage   `json:"analysis"`   // Serialized AnalysisResult
+	IncrementalMetadata map[string]string `json:"incremental_metadata,omitempty"`
 }
-
-
 
 // CacheIndex stores metadata about all cached repositories.
 // This index enables quick lookups without reading individual cache files.
@@ -233,12 +231,12 @@ func (c *Cache) Set(repoName string, analysis interface{}) error {
 
 	now := time.Now()
 	entry := CacheEntry{
-	RepoName:            repoName,
-	CachedAt:            now,
-	ExpiresAt:           now.Add(c.config.TTL),
-	Analysis:            analysisData,
-	IncrementalMetadata: make(map[string]string),
-}
+		RepoName:            repoName,
+		CachedAt:            now,
+		ExpiresAt:           now.Add(c.config.TTL),
+		Analysis:            analysisData,
+		IncrementalMetadata: make(map[string]string),
+	}
 
 	// Save to file
 	filename := repoToFilename(repoName)
