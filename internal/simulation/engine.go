@@ -3,9 +3,13 @@ package simulation
 import (
 	"fmt"
 	"time"
-
-	"github.com/agnivo988/Repo-lyzer/internal/temporal"
 )
+
+// TimelineView is the minimal timeline surface needed by simulation.
+// It avoids a package cycle with internal/temporal.
+type TimelineView interface {
+	IsEmpty() bool
+}
 
 // RunScenario executes a simulation scenario and returns the result.
 // The scenario defines parameters that are used to simulate repository evolution.
@@ -16,7 +20,7 @@ import (
 // - Applying scenario-specific dynamics
 // - Collecting metrics at each timestep
 // - Analyzing and summarizing outcomes
-func (s *ScenarioRunner) RunScenario(scenario SimulationScenario, timeline *temporal.Timeline) (*SimulationResult, error) {
+func (s *ScenarioRunner) RunScenario(scenario SimulationScenario, timeline TimelineView) (*SimulationResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -31,7 +35,7 @@ func (s *ScenarioRunner) RunScenario(scenario SimulationScenario, timeline *temp
 }
 
 // RunMultipleScenarios executes multiple scenarios and returns all results.
-func (s *ScenarioRunner) RunMultipleScenarios(scenarios []SimulationScenario, timeline *temporal.Timeline) ([]SimulationResult, error) {
+func (s *ScenarioRunner) RunMultipleScenarios(scenarios []SimulationScenario, timeline TimelineView) ([]SimulationResult, error) {
 	results := make([]SimulationResult, 0, len(scenarios))
 
 	for _, scenario := range scenarios {
@@ -54,7 +58,7 @@ func (s *ScenarioRunner) RunMultipleScenarios(scenarios []SimulationScenario, ti
 // - Computing knowledge loss impact
 // - Tracking health degradation over time
 // - Estimating recovery timeline
-func (s *ScenarioRunner) SimulateContributorDeparture(timeline *temporal.Timeline, contributor string, replacementMonths int) (*SimulationResult, error) {
+func (s *ScenarioRunner) SimulateContributorDeparture(timeline TimelineView, contributor string, replacementMonths int) (*SimulationResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -85,7 +89,7 @@ func (s *ScenarioRunner) SimulateContributorDeparture(timeline *temporal.Timelin
 // - Computing temporary productivity loss
 // - Modeling recovery period
 // - Computing long-term benefits
-func (s *ScenarioRunner) SimulateMajorRefactoring(timeline *temporal.Timeline, subsystem string, effortHours int) (*SimulationResult, error) {
+func (s *ScenarioRunner) SimulateMajorRefactoring(timeline TimelineView, subsystem string, effortHours int) (*SimulationResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -117,7 +121,7 @@ func (s *ScenarioRunner) SimulateMajorRefactoring(timeline *temporal.Timeline, s
 // - Computing temporary instability
 // - Modeling stability recovery
 // - Computing long-term benefits
-func (s *ScenarioRunner) SimulateDependencyUpgrade(timeline *temporal.Timeline, dependency string, breakingChange bool) (*SimulationResult, error) {
+func (s *ScenarioRunner) SimulateDependencyUpgrade(timeline TimelineView, dependency string, breakingChange bool) (*SimulationResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -150,7 +154,7 @@ func (s *ScenarioRunner) SimulateDependencyUpgrade(timeline *temporal.Timeline, 
 // - Computing knowledge distribution effects
 // - Modeling communication overhead
 // - Computing productivity changes
-func (s *ScenarioRunner) SimulateRapidGrowth(timeline *temporal.Timeline, subsystem string, growthRate float64, teamSize int) (*SimulationResult, error) {
+func (s *ScenarioRunner) SimulateRapidGrowth(timeline TimelineView, subsystem string, growthRate float64, teamSize int) (*SimulationResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -184,7 +188,7 @@ func (s *ScenarioRunner) SimulateRapidGrowth(timeline *temporal.Timeline, subsys
 // - Ranking scenarios by impact
 // - Identifying best/worst case outcomes
 // - Providing recommendations based on comparison
-func (s *ScenarioRunner) CompareScenarios(scenarios []SimulationScenario, timeline *temporal.Timeline) (string, error) {
+func (s *ScenarioRunner) CompareScenarios(scenarios []SimulationScenario, timeline TimelineView) (string, error) {
 	if len(scenarios) == 0 {
 		return "", fmt.Errorf("must provide at least one scenario")
 	}

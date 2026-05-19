@@ -53,7 +53,8 @@ The analysis includes:
 		fmt.Println("  3. Detect architectural drift patterns")
 		fmt.Println("  4. Analyze contributor networks")
 		fmt.Println("  5. Compute evolution patterns and risks")
-		fmt.Println("\nFeature coming soon!")
+		fmt.Println()
+		fmt.Println("Feature coming soon!")
 		return fmt.Errorf("temporal analyze command not yet implemented")
 	},
 }
@@ -78,7 +79,8 @@ var forecastCmd = &cobra.Command{
 		fmt.Println("  - Maintainability")
 		fmt.Println("  - Contributor risks")
 		fmt.Println("  - Dependency stability")
-		fmt.Println("\nFeature coming soon!")
+		fmt.Println()
+		fmt.Println("Feature coming soon!")
 		return fmt.Errorf("temporal forecast command not yet implemented")
 	},
 }
@@ -103,7 +105,8 @@ var contributorsCmd = &cobra.Command{
 		fmt.Println("  - Detect expertise silos")
 		fmt.Println("  - Identify critical contributors")
 		fmt.Println("  - Track role evolution")
-		fmt.Println("\nFeature coming soon!")
+		fmt.Println()
+		fmt.Println("Feature coming soon!")
 		return fmt.Errorf("temporal contributors command not yet implemented")
 	},
 }
@@ -127,7 +130,8 @@ var driftCmd = &cobra.Command{
 		fmt.Println("  - Coupling pattern changes")
 		fmt.Println("  - Code organization shifts")
 		fmt.Println("  - Architectural decay indicators")
-		fmt.Println("\nFeature coming soon!")
+		fmt.Println()
+		fmt.Println("Feature coming soon!")
 		return fmt.Errorf("temporal drift command not yet implemented")
 	},
 }
@@ -154,14 +158,17 @@ var simulateCmd = &cobra.Command{
 		fmt.Println("  - rapid_subsystem_growth")
 		fmt.Println("  - major_dependency_upgrade")
 		fmt.Println("  - large_refactoring")
-		fmt.Println("\nFeature coming soon!")
+		fmt.Println()
+		fmt.Println("Feature coming soon!")
 		return fmt.Errorf("temporal simulate command not yet implemented")
 	},
 }
 
 // FeatureCoordinator demonstrates the complete temporal analysis flow
 func FeatureCoordinator(owner, repoName string) {
-	fmt.Println("\n=== Temporal Repository Intelligence Demo ===\n")
+	fmt.Println()
+	fmt.Println("=== Temporal Repository Intelligence Demo ===")
+	fmt.Println()
 	fmt.Printf("Repository: %s/%s\n\n", owner, repoName)
 
 	// Create coordinator
@@ -174,7 +181,8 @@ func FeatureCoordinator(owner, repoName string) {
 	fmt.Println("  - Scenario simulation")
 	fmt.Println()
 	fmt.Printf("Coordinator created with %d snapshots in timeline\n", coordinator.Timeline.SnapshotCount())
-	fmt.Println("\nNext steps:")
+	fmt.Println()
+	fmt.Println("Next steps:")
 	fmt.Println("1. Run: repo-lyzer temporal analyze <owner>/<repo>")
 	fmt.Println("2. Run: repo-lyzer temporal forecast <owner>/<repo>")
 	fmt.Println("3. Run: repo-lyzer temporal contributors <owner>/<repo>")

@@ -2,9 +2,13 @@ package predictive
 
 import (
 	"fmt"
-
-	"github.com/agnivo988/Repo-lyzer/internal/temporal"
 )
+
+// TimelineView is the minimal timeline surface needed by predictive analysis.
+// It avoids a package cycle with internal/temporal.
+type TimelineView interface {
+	IsEmpty() bool
+}
 
 // ForecastHealth generates predictions for repository health.
 // Returns a forecast with predictions for the specified number of months.
@@ -15,7 +19,7 @@ import (
 // - Generating forecasts with confidence intervals
 // - Computing trend direction and risk level
 // - Generating recommendations based on forecast
-func (p *Predictor) ForecastHealth(timeline *temporal.Timeline, months int) (*ForecastResult, error) {
+func (p *Predictor) ForecastHealth(timeline TimelineView, months int) (*ForecastResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -38,7 +42,7 @@ func (p *Predictor) ForecastHealth(timeline *temporal.Timeline, months int) (*Fo
 // - Analyzing maturity indicator trends
 // - Predicting feature completeness
 // - Estimating stability improvements
-func (p *Predictor) ForecastMaturity(timeline *temporal.Timeline, months int) (*ForecastResult, error) {
+func (p *Predictor) ForecastMaturity(timeline TimelineView, months int) (*ForecastResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -63,7 +67,7 @@ func (p *Predictor) ForecastMaturity(timeline *temporal.Timeline, months int) (*
 // - Computing attrition risk from satisfaction indicators
 // - Computing knowledge loss risk from expertise uniqueness
 // - Generating support recommendations
-func (p *Predictor) ForecastContributorRisk(timeline *temporal.Timeline) ([]ContributorRiskForecast, error) {
+func (p *Predictor) ForecastContributorRisk(timeline TimelineView) ([]ContributorRiskForecast, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -81,7 +85,7 @@ func (p *Predictor) ForecastContributorRisk(timeline *temporal.Timeline) ([]Cont
 // - Computing code review load
 // - Analyzing issue triage patterns
 // - Detecting sustained high effort over time
-func (p *Predictor) EstimateBurnoutRisk(contributor string, timeline *temporal.Timeline) (float64, error) {
+func (p *Predictor) EstimateBurnoutRisk(contributor string, timeline TimelineView) (float64, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return 0.0, fmt.Errorf("timeline is empty")
 	}
@@ -102,7 +106,7 @@ func (p *Predictor) EstimateBurnoutRisk(contributor string, timeline *temporal.T
 // - Tracking breaking change frequency
 // - Predicting update demand based on trends
 // - Computing overall stability trajectory
-func (p *Predictor) ForecastDependencyStability(timeline *temporal.Timeline, months int) (*ForecastResult, error) {
+func (p *Predictor) ForecastDependencyStability(timeline TimelineView, months int) (*ForecastResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}
@@ -127,7 +131,7 @@ func (p *Predictor) ForecastDependencyStability(timeline *temporal.Timeline, mon
 // - Computing debt accumulation rate
 // - Predicting future debt levels
 // - Generating refactoring recommendations
-func (p *Predictor) ProjectTechnicalDebt(timeline *temporal.Timeline, months int) (*ForecastResult, error) {
+func (p *Predictor) ProjectTechnicalDebt(timeline TimelineView, months int) (*ForecastResult, error) {
 	if timeline == nil || timeline.IsEmpty() {
 		return nil, fmt.Errorf("timeline is empty")
 	}

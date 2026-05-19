@@ -1,8 +1,10 @@
 package evolution
 
-import (
-	"github.com/agnivo988/Repo-lyzer/internal/temporal"
-)
+// TimelineView is the minimal timeline surface needed by evolution analysis.
+// It avoids a package cycle with internal/temporal.
+type TimelineView interface {
+	IsEmpty() bool
+}
 
 // DetectPatterns identifies evolution patterns in the repository timeline.
 // It analyzes snapshots over time to detect architectural and organizational patterns.
@@ -12,7 +14,7 @@ import (
 // - Contributor consolidation or distribution
 // - File reorganization patterns
 // - Dependency evolution
-func (d *Detector) DetectPatterns(timeline *temporal.Timeline) []EvolutionPattern {
+func (d *Detector) DetectPatterns(timeline TimelineView) []EvolutionPattern {
 	if timeline == nil || timeline.IsEmpty() {
 		return []EvolutionPattern{}
 	}
@@ -30,7 +32,7 @@ func (d *Detector) DetectPatterns(timeline *temporal.Timeline) []EvolutionPatter
 // - Threshold-based detection on metric changes
 // - Comparative analysis between time windows
 // - Trend analysis for sustained drift patterns
-func (d *Detector) DetectArchitecturalDrift(timeline *temporal.Timeline) []DriftIndicator {
+func (d *Detector) DetectArchitecturalDrift(timeline TimelineView) []DriftIndicator {
 	if timeline == nil || timeline.IsEmpty() {
 		return []DriftIndicator{}
 	}
@@ -49,7 +51,7 @@ func (d *Detector) DetectArchitecturalDrift(timeline *temporal.Timeline) []Drift
 // - Computing growth rates and accelerations
 // - Identifying high-complexity subsystems
 // - Correlating complexity with maintainability
-func (d *Detector) AnalyzeComplexityGrowth(timeline *temporal.Timeline) ComplexityReport {
+func (d *Detector) AnalyzeComplexityGrowth(timeline TimelineView) ComplexityReport {
 	if timeline == nil || timeline.IsEmpty() {
 		return ComplexityReport{
 			AverageComplexity:        0,
@@ -79,7 +81,7 @@ func (d *Detector) AnalyzeComplexityGrowth(timeline *temporal.Timeline) Complexi
 // - Computing expertise distribution
 // - Detecting role transitions
 // - Computing knowledge concentration
-func (d *Detector) TrackContributorEvolution(timeline *temporal.Timeline) []ContributorRole {
+func (d *Detector) TrackContributorEvolution(timeline TimelineView) []ContributorRole {
 	if timeline == nil || timeline.IsEmpty() {
 		return []ContributorRole{}
 	}
@@ -98,7 +100,7 @@ func (d *Detector) TrackContributorEvolution(timeline *temporal.Timeline) []Cont
 // - Identifying subsystems with single points of knowledge
 // - Detecting potential single points of failure
 // - Computing replacement cost estimates
-func (d *Detector) DetectKnowledgeSilos(timeline *temporal.Timeline) []Bottleneck {
+func (d *Detector) DetectKnowledgeSilos(timeline TimelineView) []Bottleneck {
 	if timeline == nil || timeline.IsEmpty() {
 		return []Bottleneck{}
 	}
@@ -117,7 +119,7 @@ func (d *Detector) DetectKnowledgeSilos(timeline *temporal.Timeline) []Bottlenec
 // - Contributor-based risks (burnout, attrition, silos)
 // - Dependency-based risks (instability, obsolescence)
 // - Sustainability risks (slow maintenance, low activity)
-func (d *Detector) IdentifyRisks(timeline *temporal.Timeline) []RiskIndicator {
+func (d *Detector) IdentifyRisks(timeline TimelineView) []RiskIndicator {
 	if timeline == nil || timeline.IsEmpty() {
 		return []RiskIndicator{}
 	}
@@ -135,7 +137,7 @@ func (d *Detector) IdentifyRisks(timeline *temporal.Timeline) []RiskIndicator {
 // - Aggregating individual risk indicators
 // - Weighting different risk categories
 // - Computing compound risk effects
-func (d *Detector) ComputeRiskScore(timeline *temporal.Timeline) float64 {
+func (d *Detector) ComputeRiskScore(timeline TimelineView) float64 {
 	risks := d.IdentifyRisks(timeline)
 	if len(risks) == 0 {
 		return 0.0
