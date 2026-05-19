@@ -1,6 +1,8 @@
 package contribution
 
 import (
+	"strings"
+
 	"github.com/agnivo988/Repo-lyzer/internal/github"
 )
 
@@ -10,6 +12,23 @@ type ContributionScore struct {
 	Level      string   `json:"level"`
 	Strengths  []string `json:"strengths"`
 	Weaknesses []string `json:"weaknesses"`
+}
+
+var readmeKeywords = []string{
+	"installation",
+	"setup",
+	"getting started",
+	"usage",
+}
+
+func hasSetupSection(readmeContent string) bool {
+	contentLower := strings.ToLower(readmeContent)
+	for _, kw := range readmeKeywords {
+		if strings.Contains(contentLower, kw) {
+			return true
+		}
+	}
+	return false
 }
 
 // Calculate computes the contribution score based on various repository metrics.
