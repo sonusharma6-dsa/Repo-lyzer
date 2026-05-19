@@ -883,6 +883,45 @@ func (m MainModel) analyzeRepo(ctx context.Context, repoName string) tea.Cmd {
 		if err != nil {
 			return fmt.Errorf("failed to get file tree: %w", err)
 		}
+
+		// Build current file hash map for incremental analysis
+		currentHashes := make(map[string]string)
+
+		for _, file := range fileTree {
+			// Skip directories
+			if file.Type != "blob" {
+				continue
+			}
+
+			// Store filepath -> SHA mapping
+			currentHashes[file.Path] = file.Sha
+		}
+
+		// Compare with cached incremental metadata
+		changedFiles := []string{}
+
+		if entry, found := m.cache.Get(repoName); found {
+			if entry.IncrementalMetadata != nil {
+
+				for path, hash := range currentHashes {
+					cachedHash, exists := entry.IncrementalMetadata[path]
+
+					// File is new or modified
+					if !exists || cachedHash != hash {
+						changedFiles = append(changedFiles, path)
+					}
+				}
+
+				fmt.Printf("🔄 Incremental analysis enabled\n")
+				fmt.Printf("📂 Changed files detected: %d\n", len(changedFiles))
+
+				// No changes detected
+				if len(changedFiles) == 0 {
+					fmt.Println("✅ No repository changes detected. Using cached analysis.")
+				}
+			}
+		}
+
 		tracker.NextStage()
 
 		// Stage 5: Compute metrics
