@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -282,17 +283,48 @@ func (m *Monitor) loadState() {
 	defer m.stateMutex.Unlock()
 
 	key := fmt.Sprintf("%s/%s", m.owner, m.repo)
-	if _, found := m.cache.Get(key); found {
-		// In a full implementation, we'd deserialize the state
-		// For now, just initialize with current time
-		m.state.LastUpdated = time.Now()
+	entry, found := m.cache.Get(key)
+	if !found || entry == nil || len(entry.Analysis) == 0 {
+		return
 	}
+
+	var cachedState MonitorState
+	if err := json.Unmarshal(entry.Analysis, &cachedState); err != nil {
+		log.Printf("Failed to restore monitoring state for %s: %v", key, err)
+		return
+	}
+
+	// Ensure monitor identity remains consistent even with older cache payloads.
+	if cachedState.Owner == "" {
+		cachedState.Owner = m.owner
+	}
+	if cachedState.Repo == "" {
+		cachedState.Repo = m.repo
+	}
+	if cachedState.Owner != m.owner || cachedState.Repo != m.repo {
+		log.Printf("Ignoring monitoring state for mismatched repository: %s/%s", cachedState.Owner, cachedState.Repo)
+		return
+	}
+
+	m.state = &cachedState
 }
 
 // saveState saves the monitoring state to cache
 func (m *Monitor) saveState() {
 	key := fmt.Sprintf("%s/%s", m.owner, m.repo)
-	// In a full implementation, we'd serialize the state
-	// For now, just save a placeholder
-	m.cache.Set(key, m.state)
+	if m.state == nil {
+		return
+	}
+
+	stateCopy := *m.state
+	if stateCopy.Owner == "" {
+		stateCopy.Owner = m.owner
+	}
+	if stateCopy.Repo == "" {
+		stateCopy.Repo = m.repo
+	}
+
+	if err := m.cache.Set(key, stateCopy); err != nil {
+		log.Printf("Failed to persist monitoring state for %s: %v", key, err)
+	}
 }
