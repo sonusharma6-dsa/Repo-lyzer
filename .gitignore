@@ -3,7 +3,6 @@ exports/history.json
 # Go build artifacts
 repo-lyzer.exe
 repo-lyzer
-go_temp/
 *.exe
 *.exe~
 *.dll
