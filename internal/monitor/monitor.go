@@ -188,7 +188,7 @@ func (m *Monitor) checkCommits() {
 	}
 }
 
-// checkIssues monitors for new issues
+// checkIssues monitors for new issues (excludes pull requests)
 func (m *Monitor) checkIssues() {
 	issues, err := m.client.GetIssues(m.owner, m.repo, "open")
 	if err != nil {
@@ -196,40 +196,57 @@ func (m *Monitor) checkIssues() {
 		return
 	}
 
-	// Check if the number of issues has changed
-	if len(issues) != m.state.LastIssueID {
+	// Filter out pull requests – the GitHub Issues API returns both issues
+	// and PRs; items with a non-nil PullRequest field are pull requests.
+	var actualIssuesCount int
+	for _, issue := range issues {
+		if issue.PullRequest == nil {
+			actualIssuesCount++
+		}
+	}
+
+	// Only notify when the count actually changes
+	if actualIssuesCount != m.state.LastIssueID {
 		notification := Notification{
 			Type:      "issue",
 			Title:     "Issues Update",
-			Message:   fmt.Sprintf("Repository has %d open issues", len(issues)),
+			Message:   fmt.Sprintf("Repository has %d open issues", actualIssuesCount),
 			Timestamp: time.Now(),
 			Severity:  "info",
 		}
 		m.notifications <- notification
-		m.state.LastIssueID = len(issues)
+		m.state.LastIssueID = actualIssuesCount
 	}
 }
 
-// checkPullRequests monitors for new pull requests
+// checkPullRequests monitors for new pull requests (filtered and state-tracked)
 func (m *Monitor) checkPullRequests() {
-	// For now, we'll use the same issues endpoint since PRs are a type of issue
-	// In a full implementation, we'd filter for pull requests specifically
-	prs, err := m.client.GetIssues(m.owner, m.repo, "open")
+	issues, err := m.client.GetIssues(m.owner, m.repo, "open")
 	if err != nil {
 		log.Printf("Failed to get pull requests: %v", err)
 		return
 	}
 
-	if len(prs) != m.state.LastPRID {
+	// Filter for pull requests only – the GitHub Issues API returns both
+	// issues and PRs; items with a non-nil PullRequest field are pull requests.
+	var actualPRCount int
+	for _, issue := range issues {
+		if issue.PullRequest != nil {
+			actualPRCount++
+		}
+	}
+
+	// Only notify when the PR count actually changes
+	if actualPRCount != m.state.LastPRID {
 		notification := Notification{
 			Type:      "pr",
 			Title:     "Pull Requests Update",
-			Message:   fmt.Sprintf("Repository has %d open pull requests/issues", len(prs)),
+			Message:   fmt.Sprintf("Repository has %d open pull requests", actualPRCount),
 			Timestamp: time.Now(),
 			Severity:  "info",
 		}
 		m.notifications <- notification
-		m.state.LastPRID = len(prs)
+		m.state.LastPRID = actualPRCount
 	}
 }
 
