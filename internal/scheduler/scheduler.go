@@ -354,7 +354,7 @@ func (s *Scheduler) EnableJob(jobID string, enabled bool) error {
 
 // calculateNextRunTime calculates the next run time based on cron expression
 func (s *Scheduler) calculateNextRunTime(cronExpr string) time.Time {
-	parser := cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow)
+	parser := cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
 	sched, err := parser.Parse(cronExpr)
 	if err != nil {
 		return time.Now().Add(24 * time.Hour) // fallback
@@ -364,7 +364,7 @@ func (s *Scheduler) calculateNextRunTime(cronExpr string) time.Time {
 
 // ValidateCronExpression validates a cron expression
 func ValidateCronExpression(expr string) error {
-	parser := cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow)
+	parser := cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
 	_, err := parser.Parse(expr)
 	return err
 }

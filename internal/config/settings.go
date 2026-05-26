@@ -398,7 +398,7 @@ func generateJobID(owner, repo string) string {
 
 // calculateNextRun calculates the next run time based on cron expression
 func calculateNextRun(cronExpr string) time.Time {
-	parser := cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow)
+	parser := cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
 	schedule, err := parser.Parse(cronExpr)
 	if err != nil {
 		// Fallback if the expression is invalid
