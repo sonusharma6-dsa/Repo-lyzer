@@ -74,6 +74,9 @@ func TestMonitorState_SaveLoadRoundTrip(t *testing.T) {
 	if restored.state.LastIssueCount != 4 {
 		t.Fatalf("LastIssueCount = %d, want 4", restored.state.LastIssueCount)
 	}
+	if restored.state.LastPRCount != 2 {
+		t.Fatalf("LastPRCount = %d, want 2", restored.state.LastPRCount)
+	}
 	if restored.state.LastContributorCount != 7 {
 		t.Fatalf("LastContributorCount = %d, want 7", restored.state.LastContributorCount)
 	}
