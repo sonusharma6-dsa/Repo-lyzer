@@ -1,12 +1,15 @@
 module github.com/agnivo988/Repo-lyzer
 
+
 go 1.24.2
 
 require (
 	github.com/charmbracelet/bubbles v1.0.0
 	github.com/jung-kurt/gofpdf v1.16.2
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/spf13/cobra v1.10.2
 	github.com/wcharczuk/go-chart/v2 v2.1.2
+	golang.org/x/sync v0.10.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
