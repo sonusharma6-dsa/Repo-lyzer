@@ -80,16 +80,23 @@ func (c *Client) GetCommits(owner, repo string, days int) ([]Commit, error) {
 	return v.([]Commit), nil
 }
 
+func copyCommitDetail(d CommitDetail) CommitDetail {
+	out := d
+	out.Files = make([]CommitFile, len(d.Files))
+	copy(out.Files, d.Files)
+	return out
+}
+
 func (c *Client) GetCommit(owner, repo, sha string) (*CommitDetail, error) {
 	cacheKey := "commit:" + owner + "/" + repo + ":" + sha
 	if cached, found := c.cache.Get(cacheKey); found {
-		d := cached.(CommitDetail)
+		d := copyCommitDetail(cached.(CommitDetail))
 		return &d, nil
 	}
 
 	v, err, _ := c.sf.Do(cacheKey, func() (interface{}, error) {
 		if cached, found := c.cache.Get(cacheKey); found {
-			d := cached.(CommitDetail)
+			d := copyCommitDetail(cached.(CommitDetail))
 			return &d, nil
 		}
 
@@ -100,10 +107,12 @@ func (c *Client) GetCommit(owner, repo, sha string) (*CommitDetail, error) {
 		}
 
 		c.cache.Set(cacheKey, commit, gocache.DefaultExpiration)
-		return &commit, nil
+		d := copyCommitDetail(commit)
+		return &d, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return v.(*CommitDetail), nil
+	d := copyCommitDetail(*v.(*CommitDetail))
+	return &d, nil
 }
